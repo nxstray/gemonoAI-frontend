@@ -1,7 +1,6 @@
 <template>
   <div class="verify-root">
     <div class="verify-card gm-surface">
-      <!-- Loading -->
       <div v-if="state === 'loading'" class="verify-state">
         <div class="loading-dots">
           <span class="loading-dot" /><span class="loading-dot" /><span class="loading-dot" />
@@ -9,16 +8,18 @@
         <p class="verify-label">Verifying your login link...</p>
       </div>
 
-      <!-- Success -->
       <div v-else-if="state === 'success'" class="verify-state">
-        <span class="verify-icon">✓</span>
+        <span class="verify-icon">
+          <IconCheck style="width: 24px; height: 24px;" />
+        </span>
         <p class="verify-title">Signed in</p>
         <p class="verify-sub">Redirecting you to Gemono...</p>
       </div>
 
-      <!-- Error -->
       <div v-else-if="state === 'error'" class="verify-state">
-        <span class="verify-icon error">✕</span>
+        <span class="verify-icon error">
+          <IconClose style="width: 24px; height: 24px;" />
+        </span>
         <p class="verify-title">Link invalid or expired</p>
         <p class="verify-sub">{{ errorMsg }}</p>
         <button class="gm-btn gm-btn-ghost" style="margin-top:20px;" @click="goToLogin">
@@ -35,6 +36,8 @@ import { useRoute, useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import authService from '@/services/authService'
 import guestService from '@/services/guestService'
+import IconCheck from '@/components/icons/IconCheck.vue'
+import IconClose from '@/components/icons/IconClose.vue'
 
 const route = useRoute()
 const router = useRouter()
