@@ -15,15 +15,17 @@
   "dependencies": {
     "@tailwindcss/vite": "^4.3.1",
     "axios": "^1.18.1",
-    "gooey-toast": "^0.2.2",
     "highlight.js": "^11.11.1",
     "marked": "^18.0.5",
+    "motion-v": "^2.3.0",
     "pinia": "^3.0.4",
     "radix-vue": "^1.9.17",
     "tailwindcss": "^4.3.1",
     "uuid": "^14.0.1",
     "vue": "^3.5.38",
-    "vue-router": "^5.1.0"
+    "vue-goey-toast": "^0.1.0",
+    "vue-router": "^5.1.0",
+    "vue-sonner": "^2.0.9"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
