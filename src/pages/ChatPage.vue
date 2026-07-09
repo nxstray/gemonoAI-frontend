@@ -313,6 +313,8 @@
   )
 
   onMounted(async () => {
+    api.get('/api/health').catch(() => {})
+
     if (!authStore.isLoggedIn) {
       guestService.resetSession()
       return
@@ -392,6 +394,14 @@
     })
     scrollToBottom()
 
+    let coldStartTimer = setTimeout(() => {
+      gooeyToast.info('Server sedang bangun dari mode tidur. Mohon tunggu sekitar 30–60 detik ya...')
+    }, 5000)
+
+    let stillWaitingTimer = setTimeout(() => {
+      gooeyToast.info('Masih memproses... hampir selesai, mohon tunggu sedikit lagi.')
+    }, 20000)
+
     try {
       await convStore.sendMessageStream(content, activeId.value, fileList, (chunk, fullText) => {
         const target = convStore.messages.find(m => m.clientId === assistantClientId)
@@ -412,6 +422,9 @@
       )
       const msg = err.response?.data?.error || 'Failed to send message'
       gooeyToast.error(msg)
+    } finally {
+      clearTimeout(coldStartTimer)
+      clearTimeout(stillWaitingTimer)
     }
   }
 

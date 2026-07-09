@@ -27,9 +27,12 @@
               v-model="email"
               type="email"
               class="gm-input"
+              :class="{ 'is-disabled': emailLoginDisabled }"
               placeholder="Input your email"
               data-testid="email-input"
               autocomplete="email"
+              :readonly="emailLoginDisabled"
+              @click="handleDisabledClick"
               required
             />
           </div>
@@ -37,7 +40,8 @@
           <button
             type="submit"
             class="gm-btn gm-btn-primary w-full"
-            :disabled="loading || !email.trim()"
+            :class="{ 'is-disabled': emailLoginDisabled }"
+            :disabled="loading || (!emailLoginDisabled && !email.trim())"
             data-testid="send-link-btn"
           >
             <span v-if="!loading">Continue with email </span>
@@ -78,12 +82,31 @@ const email = ref('')
 const loading = ref(false)
 const linkSent = ref(false)
 
-// Google OAuth — full browser redirect, not axios
+// Login with email is temporarily disabled in production (Resend not fully wired up
+// yet), but stays fully functional in local development (npm run dev).
+// import.meta.env.PROD is a Vite built-in — true for production builds, false in dev.
+const emailLoginDisabled = import.meta.env.PROD
+
+function handleDisabledClick() {
+  if (emailLoginDisabled) {
+    gooeyToast.error('Fitur login with email sementara tidak tersedia')
+  }
+}
+
+// Google OAuth — full browser redirect, not axios.
+// Uses the same API base URL env var as the rest of the app instead of a hardcoded
+// localhost URL, so this works correctly once deployed to production.
 function loginWithGoogle() {
-  window.location.href = 'http://localhost:8020/oauth2/authorization/google'
+  const apiBase = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8020/api'
+  const backendRoot = apiBase.replace(/\/api\/?$/, '')
+  window.location.href = `${backendRoot}/oauth2/authorization/google`
 }
 
 async function handleSendLink() {
+  if (emailLoginDisabled) {
+    gooeyToast.error('Fitur login with email sementara tidak tersedia')
+    return
+  }
   if (!email.value.trim()) return
   loading.value = true
 
@@ -159,6 +182,11 @@ function resetForm() {
 
 .w-full { width: 100%; }
 .loading-dots { display: flex; gap: 4px; align-items: center; }
+
+.is-disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
 
 /* Sent state */
 .sent-state {
